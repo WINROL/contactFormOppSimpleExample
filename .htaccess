@@ -1,0 +1,30 @@
+AddDefaultCharset utf-8
+#AddDefaultCharset windows-1251
+php_value error_reporting "E_ALL"
+php_value open_short_tag on
+#php_value date.timezone "Europe/Kyiv"
+
+php_value upload_max_filesize 40M
+php_value post_max_size 42M
+
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteBase /
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule ^(.*)$ index.php [L]
+</IfModule>
+
+Options -Indexes
+
+<Files ~ "\.(json|php|txt|ini|key)$">
+	Deny from all
+</Files>
+
+<Files "index.php">
+	Allow from all
+</Files>
+
+<Files "robots.txt">
+	Allow from all
+</Files>
