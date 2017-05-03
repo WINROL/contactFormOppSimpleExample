@@ -8,8 +8,8 @@
                value="<?php echo isset($name) ? $name : ''; ?>"
                name="name" placeholder="Пример: Руслан" />
         <?php
-        if (!empty($form->getField('name')->getCustomError())) {
-            echo '<span style="color: red">'. $form->getField('name')->getCustomError() .'</span>';
+        if (!empty($errors['name'])) {
+            echo '<span style="color: red">'. $errors['name'] .'</span>';
         }
         ?>
     </label>
@@ -19,13 +19,11 @@
 
         <br>
         <input type="text"
-               value="<?php echo empty($form->getField('email')->getCustomError())
-                   ? htmlspecialchars($form->getField('email')->getValue(), ENT_QUOTES, 'utf-8')
-                   : ''; ?>"
+               value=""
                name="email">
         <?php
-        if (!empty($form->getField('email')->getCustomError())) {
-            echo '<span style="color: red">' . $form->getField('email')->getCustomError() . '</span>';
+        if (!empty($errors['email'])) {
+            echo '<span style="color: red">' . $errors['email'] . '</span>';
         }
         ?>
 

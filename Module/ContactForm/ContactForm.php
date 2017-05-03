@@ -6,20 +6,15 @@
 
 namespace Module\ContactForm;
 
-use Module\FormBuilder\Exception\FormValidateParamException;
-use Module\FormBuilder\FormBuilderInterface;
-
 /**
  * Class ContactForm
  * @package Module\ContactForm
  */
 class ContactForm
 {
-    /**
-     * @var FormBuilderInterface|null
-     */
-    protected $formBuilder = null;
-    protected $isValid = false;
+    protected $name = null;
+    protected $email = null;
+    static public $errors = [];
 
     /**
      * @var bool|FormSaveInterface
@@ -28,35 +23,22 @@ class ContactForm
 
     /**
      * ContactForm constructor.
-     * @param ContactFormBuilder $contactFormBuilder
+     * @param array $data
      * @param FormSaveInterface $formSave
      */
-    public function __construct(ContactFormBuilder $contactFormBuilder, FormSaveInterface $formSave)
+    public function __construct(array $data, FormSaveInterface $formSave)
     {
-        $this->formBuilder = $contactFormBuilder->buildForm();
+        foreach ($this as $key => $val) {
+            if (isset($data[$key])) {
+                $this->{$key} = $data[$key];
+            }
+        }
+
         $this->formSave = $formSave;
     }
 
     /**
-     * @param $fields
-     */
-    public function handleRequest(array $fields)
-    {
-        foreach ($fields as $name => $value) {
-            $item = $this->formBuilder->get($name);
-            if (null !== $item) {
-                $item->setValue($value);
-            }
-        }
-
-        if (false !== $this->isValid) {
-            $this->isValid = false;
-        }
-    }
-
-    /**
      * @return bool
-     * @throws FormValidateParamException
      */
     public function isValid()
     {
@@ -68,21 +50,19 @@ class ContactForm
      */
     private function validate()
     {
-        $items = $this->formBuilder->getFields();
-        $valid = 0;
-        if (empty($items)) {
+        if (empty($this->name)) {
+            self::$errors['name'] = 'Не заполнено поле "name"';
+        }
+
+        if (empty($this->email)) {
+            self::$errors['email'] = 'Не заполнено поле "email"';
+        }
+
+        if (!empty(self::$errors)) {
             return false;
         }
 
-        foreach ($items as $item) {
-            if ($item->isValid()) {
-                $valid++;
-            }
-        }
-
-        $this->isValid = $valid === count($items) ? true : false;
-
-        return $this->isValid;
+        return true;
     }
 
     /**
@@ -94,29 +74,10 @@ class ContactForm
             return false;
         }
 
-        $items = $this->formBuilder->getFields();
         $params = [];
-
-        if (!empty($items)) {
-            foreach ($items as $item) {
-                $params[$item->getName()] = $item->getValue();
-            }
-        }
+        $params['name'] = $this->name;
+        $params['email'] = $this->email;
 
         return $this->formSave->save($params);
-    }
-
-    /**
-     * @param $fieldName
-     * @return \Module\FormBuilder\FormBuilderItem
-     */
-    public function getField($fieldName)
-    {
-        return $this->formBuilder->get($fieldName);
-    }
-
-    public function getForm()
-    {
-
     }
 }

@@ -1,8 +1,6 @@
 AddDefaultCharset utf-8
-#AddDefaultCharset windows-1251
-php_value error_reporting "E_ALL"
-php_value open_short_tag on
-#php_value date.timezone "Europe/Kyiv"
+php_value error_reporting "0"
+php_value open_short_tag off
 
 php_value upload_max_filesize 40M
 php_value post_max_size 42M
